@@ -1,0 +1,70 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model SkillView;
+
+
+<!-- Child template-specific content goes here -->
+
+<form class="mx-5" asp-action="Create" asp-controller="Skill" method="post">
+    <div class="mb-3">
+        <label for="title" class="form-label" asp-for="@Model.SKillInput.Name">SKill Name</label>
+        <input type="text" class="form-control" id="title" aria-describedby="titleHelp" asp-for="@Model.SKillInput.Name">
+    </div>
+    <button type="submit" class="btn btn-primary">Add new Skill</button>
+</form>
+
+    <h1 class="text-center my-2">Skills Inlisted:</h1>
+    <div class="mynotes row "></div>
+
+    <!-- ... previous HTML code ... -->
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Skill Id</th>
+                <th>Skill Name</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in Model.Skills)
+            {
+                <tr>
+                    <td>@skill.ID</td>
+                    <td>@skill.Name</td>
+                        <td><a asp-action="Update" asp-controller="Skill" asp-route-id="@skill.ID">Edit</a></td>
+                    <td>
+                            <form asp-controller="Skill" asp-action="Delete" method="post">
+                        <input asp-for="@skill.ID" type="hidden" name="id" value="@skill.ID" />
+                            <button type="submit" class="btn btn-link" >Delete</button>
+                    </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Check for the existence of TempData messages and display them
+        document.addEventListener("DOMContentLoaded", function () {
+            var successMessage = "@TempData["Message"]";
+            var errorMessage = "@TempData["Error"]";
+
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+    </script>
+}

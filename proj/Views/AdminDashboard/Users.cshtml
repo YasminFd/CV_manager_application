@@ -1,0 +1,52 @@
+﻿@model List<UsersView>
+@{
+    Layout = "_Admin_Layout";
+    ViewData["Title"] = "Register New Admin";
+    var currentUserName = Context.User.Identity.Name;
+}
+<h1>User List</h1>
+
+<form asp-controller="AdminDashboard" asp-action="Delete" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Where(u => u.UserName != currentUserName))
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@string.Join(", ", user.Roles)</td>
+                    <td>
+                        <button type="submit" class="btn btn-link" name="userId" value="@user.UserId">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Check for the existence of TempData messages and display them
+        document.addEventListener("DOMContentLoaded", function () {
+            var successMessage = "@TempData["Message"]";
+            var errorMessage = "@TempData["Error"]";
+
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+    </script>
+}
