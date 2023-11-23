@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 using proj.Models;
+
 
 namespace proj.Data
 {
@@ -10,6 +12,7 @@ namespace proj.Data
             : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);//better ad for when adding other migrations
@@ -41,5 +44,6 @@ namespace proj.Data
         }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Resume> Resumes { get; set; }
+
     }
 }

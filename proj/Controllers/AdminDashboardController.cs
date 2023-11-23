@@ -9,6 +9,8 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore.Storage;
 using proj.Services;
 
+
+
 namespace proj.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -16,11 +18,13 @@ namespace proj.Controllers
     {
         [BindProperty]
         public Skill SkillInput { get; set; }
+
         public Input Input { get; set; }
 
         private readonly UserManager<IdentityUser> _userManager;
         //private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
         private readonly IDatabaseRepository _db;
         public string ReturnUrl { get; set; }
 
@@ -44,6 +48,10 @@ namespace proj.Controllers
             Resume r = _db.GetResumeWithSkillsById(id);
             return View(r);
         }
+
+        public string ReturnUrl { get; set; }
+
+        
         public IActionResult Index()
         {
             return View();
@@ -76,6 +84,8 @@ namespace proj.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+
+
         public async Task<IActionResult> Register(Input model)
         {
             if (ModelState.IsValid)
