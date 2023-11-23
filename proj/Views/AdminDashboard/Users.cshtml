@@ -1,7 +1,8 @@
-﻿@model List<UsersView>
+@model List<UsersView>
 @{
     Layout = "_Admin_Layout";
     ViewData["Title"] = "Register New Admin";
+    var currentUserName = Context.User.Identity.Name;
 }
 <h1>User List</h1>
 
@@ -16,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in Model)
+            @foreach (var user in Model.Where(u => u.UserName != currentUserName))
             {
                 <tr>
                     <td>@user.UserName</td>

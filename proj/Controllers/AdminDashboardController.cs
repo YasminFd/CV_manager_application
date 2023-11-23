@@ -6,27 +6,52 @@ using proj.Models;
 using proj.Controllers;
 using proj.Areas;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.Storage;
+using proj.Services;
+
+
 
 namespace proj.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminDashboardController : Controller
     {
-        //[BindProperty]
+        [BindProperty]
+        public Skill SkillInput { get; set; }
+
         public Input Input { get; set; }
 
         private readonly UserManager<IdentityUser> _userManager;
         //private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private readonly IDatabaseRepository _db;
         public string ReturnUrl { get; set; }
 
-        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,IDatabaseRepository databaseRepository)
         {
             _userManager = userManager;
             //  _signInManager = signInManager;
+            _db = databaseRepository;
             _roleManager = roleManager;
         }
+        [HttpGet]
+        public IActionResult Resumes()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Resume> r = _db.GetAllResumes();
+            return View(r);
+        }
+        [HttpGet]
+        public IActionResult Resume(int id)
+        {
+            Resume r = _db.GetResumeWithSkillsById(id);
+            return View(r);
+        }
 
+        public string ReturnUrl { get; set; }
+
+        
         public IActionResult Index()
         {
             return View();
@@ -51,6 +76,11 @@ namespace proj.Controllers
 
             return View(usersWithRoles);
             
+        }
+        [HttpGet]
+        public IActionResult Skills()
+        {
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

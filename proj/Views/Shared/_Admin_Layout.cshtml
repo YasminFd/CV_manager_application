@@ -1,4 +1,4 @@
-﻿<!-- Views/Shared/_Layout.cshtml -->
+<!-- Views/Shared/_Layout.cshtml -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,9 +25,13 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="AdminDashboard" asp-action="Users">Users</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Skill" asp-action="Index">Skills</a>
+                        </li>
+                        <partial name="_LoginPartial" />
                         <!-- Add more navigation links here -->
                     </ul>
-                    <partial name="_LoginPartial" />
+                    
                 </div>
 
             </div>
