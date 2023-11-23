@@ -6,30 +6,50 @@ using proj.Models;
 using proj.Controllers;
 using proj.Areas;
 using System.Security.Claims;
+using proj.Services;
 
 namespace proj.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminDashboardController : Controller
     {
-        //[BindProperty]
+        public Skill SkillInput { get; set; }
         public Input Input { get; set; }
 
         private readonly UserManager<IdentityUser> _userManager;
-        //private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private readonly IDatabaseRepository _db;
         public string ReturnUrl { get; set; }
 
-        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IDatabaseRepository databaseRepository)
         {
             _userManager = userManager;
-            //  _signInManager = signInManager;
+            _db = databaseRepository;
             _roleManager = roleManager;
+        }
+        [HttpGet]
+        public IActionResult Resumes()
+        {
+            List<Resume> r = _db.GetAllResumes();
+            return View(r);
+        }
+        [HttpGet]
+        public IActionResult Resume(int id)
+        {
+            Resume r = _db.GetResumeWithSkillsById(id);
+            return View(r);
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Delete_ResumeAsync(int id)
+        {
+            await _db.DeleteResume(id);
+            return RedirectToAction("Resumes");
         }
         [HttpGet]
         public IActionResult Register()
@@ -50,12 +70,15 @@ namespace proj.Controllers
                 .ToList();
 
             return View(usersWithRoles);
-            
+
+        }
+        [HttpGet]
+        public IActionResult Skills()
+        {
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-
         public async Task<IActionResult> Register(Input model)
         {
             if (ModelState.IsValid)
@@ -79,8 +102,8 @@ namespace proj.Controllers
                     // You can sign in the user if needed
                     // await _signInManager.SignInAsync(user, isPersistent: false);
                     Console.WriteLine("new admin created succesfully!");
-                    return RedirectToAction("Index","AdminDashboard");
-                   // return View();
+                    return RedirectToAction("Index", "AdminDashboard");
+                    // return View();
                 }
 
                 foreach (var error in result.Errors)
@@ -89,7 +112,7 @@ namespace proj.Controllers
                 }
                 return RedirectToAction("Index", "AdminDashboard");
             }
-            return RedirectToAction("Index","AdminDashboard");
+            return RedirectToAction("Index", "AdminDashboard");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

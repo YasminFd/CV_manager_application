@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model List<Resume>
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h3>View Variety of Resumes</h3>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Full Name
+                </th>
+                <th>
+                    Grade
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Resume item in Model)
+            {
+                <tr>
+                    <td>
+                        <a class="link-dark" asp-action="Index" asp-controller="Resume" asp-route-id="@item.Id">
+                            @item.FirstName &nbsp; @item.LastName
+                        </a>
+                    </td>
+                    <td style="color:palevioletred">
+                        @item.grade
+                    </td>
+                    <td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null)
+                            {
+                                if (await UserManager.IsInRoleAsync(user, "Visitor"))
+                                {
+                                    <a class="link-secondary" asp-action="Update" asp-route-id="@item.Id" asp-controller="Resume">Edit</a>
+                                    <a class="link-danger" asp-action="Index" asp-route-id="@item.Id" asp-controller="Resume">View</a>
+
+                                    <a class="link-danger" asp-action="Delete" asp-route-id="@item.Id" asp-controller="Resume">Delete</a>
+                                }
+                                else
+                                {
+                                    <a class="link-danger" asp-action="Resume" asp-route-id="@item.Id" asp-controller="AdminDashboard">View</a>
+
+                                    <a class="link-danger" asp-action="Delete_Resume" asp-route-id="@item.Id" asp-controller="AdminDashboard">Delete</a>
+                                }
+                            }
+                        }
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

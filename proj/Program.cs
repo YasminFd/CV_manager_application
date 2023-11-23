@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using proj.Data;
+using static System.Formats.Asn1.AsnWriter;
+using System;
+using NuGet.Protocol.Core.Types;
+using proj.Services;
+using AutoMapper;
 
 internal class Program
 {
@@ -18,8 +23,10 @@ internal class Program
             .AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
         builder.Services.AddControllersWithViews();
-
-
+        builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        builder.Services.AddSingleton(mapper);
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -71,6 +78,16 @@ internal class Program
             }
         }
 
+        ApplyMigration();
         app.Run();
+        void ApplyMigration()
+        {
+            var scope = app.Services.CreateScope();
+            var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            if (_db.Database.GetPendingMigrations().Count() > 0)
+            {
+                _db.Database.Migrate();
+            }
+        }
     }
 }
