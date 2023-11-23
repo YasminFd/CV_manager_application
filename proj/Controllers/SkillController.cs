@@ -37,34 +37,34 @@ namespace proj.Controllers
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult Create(SkillView skillView)
+        public async Task<IActionResult> Create(SkillView skillView)
         {
             // Check if ModelState is valid
                 // Add the skill from the input model
-                _db.AddSkill(skillView.SKillInput);
+               await   _db.AddSkill(skillView.SKillInput);
 
                 // Redirect to the Index action
                 return RedirectToAction("Index");
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult Update(Skill s)
+        public async Task<IActionResult> Update(Skill s)
         {
             // Check if ModelState is valid
             // Add the skill from the input model
-            _db.UpdateSkill(s);
+            await _db.UpdateSkill(s);
 
             // Redirect to the Index action
             return RedirectToAction("Index");
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             // Check if ModelState is valid
             // Add the skill from the input model
 
-            _db.DeleteSkill(_db.GetSkillById(id));
+            await _db.DeleteSkill(_db.GetSkillById(id));
 
             // Redirect to the Index action
             return RedirectToAction("Index");

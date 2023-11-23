@@ -33,16 +33,29 @@ namespace proj.Controllers
             return View(Input);
         }
         [HttpGet]
+        public IActionResult List()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Resume> r = _db.GetAllResumesForUser(userId);
+            return View(r);
+        }
+        [HttpGet]
         public IActionResult Index(int id)
         {
             Resume r = _db.GetResumeWithSkillsById(id);
             return View(r);
         }
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Update(int id)
         {
-            _db.DeleteResume(id);
-            return RedirectToAction("");
+            Resume r = _db.GetResumeWithSkillsById(id);
+            return View(r);
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            await _db.DeleteResume(id);
+            return RedirectToAction("List");
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
@@ -108,7 +121,8 @@ namespace proj.Controllers
             r.email= User.FindFirstValue(ClaimTypes.Email);
             r.user = await _user.GetUserAsync(User);
             await _db.AddResume(r);
-            return RedirectToAction("Index",r.Id);
+            return RedirectToAction("Index", new { id = r.Id });
+
         }
     }
     public class ResumeCreateView

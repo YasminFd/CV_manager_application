@@ -15,6 +15,8 @@ namespace proj.Services
         public Task DeleteResume(int? id);
         public Task UpdateSkill(Skill skill);
         public Task DeleteSkill(Skill skill);
+        public Skill GetSkillWithResume(int? id);
+        public List<Resume> GetAllResumesForUser(string id);
     }
 
 }

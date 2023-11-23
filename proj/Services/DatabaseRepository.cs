@@ -29,13 +29,23 @@ namespace proj.Services
 
         public async Task DeleteResume(int? id)
         {
-            Resume r = _db.Resumes.First(s => s.Id == id);
-            if (r != null)
+            try
             {
-                _db.Resumes.Remove(r);
-                await _db.SaveChangesAsync();
+                Resume r = GetResumeWithSkillsById(id);
+                if (r != null)
+                {
+                    _db.Resumes.Remove(r);
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception
+                Console.WriteLine(ex.Message);
             }
         }
+
+
 
         public List<Resume> GetAllResumes()
         {
@@ -82,6 +92,18 @@ namespace proj.Services
         {
             _db.Skills.Remove(skill);
             await _db.SaveChangesAsync();
+        }
+
+        public List<Resume> GetAllResumesForUser(string id)
+        {
+            return _db.Resumes.Where(i=> i.user.Id.Equals(id)).ToList();
+        }
+
+        public Skill GetSkillWithResume(int? id)
+        {
+            return _db.Skills
+               .Include(r => r.Resumes)  // Use the Include method from Microsoft.EntityFrameworkCore
+               .FirstOrDefault(m => m.ID == id);
         }
     }
 }

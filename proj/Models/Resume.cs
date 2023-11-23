@@ -11,6 +11,7 @@ namespace proj.Models
         public IdentityUser user { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
         [DataType(DataType.Date)]
         public DateTime? BirthDate { get; set; }
         public Gender Gender { get; set; }
