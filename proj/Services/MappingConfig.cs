@@ -12,6 +12,8 @@ namespace proj.Services
             {
                 config.CreateMap<Resume, ResumeInput>();
                 config.CreateMap<ResumeInput, Resume>();
+                config.CreateMap<ResumeUpdateInput, Resume>();
+                config.CreateMap< Resume, ResumeUpdateInput>();
             });
             return mappingConfig;
         }

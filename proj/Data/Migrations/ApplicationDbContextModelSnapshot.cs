@@ -236,7 +236,7 @@ namespace proj.Data.Migrations
 
                     b.HasIndex("SkillsID");
 
-                    b.ToTable("ResumeSkill");
+                    b.ToTable("ResumeSkill", (string)null);
                 });
 
             modelBuilder.Entity("proj.Models.Resume", b =>
@@ -286,7 +286,7 @@ namespace proj.Data.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("Resumes");
+                    b.ToTable("Resumes", (string)null);
                 });
 
             modelBuilder.Entity("proj.Models.Skill", b =>
@@ -303,7 +303,7 @@ namespace proj.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Skills", (string)null);
 
                     b.HasData(
                         new

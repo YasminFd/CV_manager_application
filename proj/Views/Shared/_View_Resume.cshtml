@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Resume
+@if (TempData["NewAlertMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["NewAlertMessage"]
+        <button type="button" class="close" data-dismiss="alert">
+            &times;
+        </button>
+    </div>
+}
+@if (@Model.ProfilePicUrl != null)
+{
+    <img src="@Model.ProfilePicUrl" width="150" height="180" />
+    <br />
+}
+<h3>Full Name: @Model.FirstName @Model.LastName</h3>
+<small>Gender: @Model.Gender</small>
+<br />
+<small>Nationality: @Model.Nationality</small>
+<br />
+@if (Model.BirthDate != null)
+{
+    <small>Birthday: @Model.BirthDate?.ToString("yyyy-MM-dd")</small>
+    <br />
+}
+<b>Email:</b> @Model.email
+<br />
+@if (Model.PhoneNumber != null)
+{
+    <small>Phone Number: @Model.PhoneNumber.</small>
+    <br />
+}
+<b>Grade:</b> @Model.grade
+<br />
+<b>Skills:</b>
+<ol>
+    @foreach (var skill in Model.Skills)
+    {
+        <li>@skill.Name</li>
+    }
+</ol>
+<div>
+    <a class="link-secondary" asp-action="Delete" asp-route-id="@Model.Id" asp-controller="Resume">Delete</a>
+</div>

@@ -29,13 +29,23 @@ namespace proj.Services
 
         public async Task DeleteResume(int? id)
         {
-            Resume r = _db.Resumes.First(s => s.Id == id);
-            if (r != null)
+            try
             {
-                _db.Resumes.Remove(r);
-                await _db.SaveChangesAsync();
+                Resume r = GetResumeWithSkillsById(id);
+                if (r != null)
+                {
+                    _db.Resumes.Remove(r);
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception
+                Console.WriteLine(ex.Message);
             }
         }
+
+
 
         public List<Resume> GetAllResumes()
         {
@@ -70,9 +80,65 @@ namespace proj.Services
 
         public async Task UpdateResume(Resume resume)
         {
-            _db.Resumes.Update(resume);
-            await _db.SaveChangesAsync();
+            try
+            {
+                // Check if the resume exists
+                var existingResume = await _db.Resumes
+                    .Include(r => r.Skills) // Include the Skills navigation property
+                    .FirstOrDefaultAsync(r => r.Id == resume.Id);
+
+                if (existingResume == null)
+                {
+                    // Handle case where the resume does not exist
+                    // (you may want to log this or return an appropriate response)
+                    return;
+                }
+
+                // Update resume properties
+                existingResume.BirthDate = resume.BirthDate;
+                existingResume.FirstName = resume.FirstName;
+                existingResume.Gender = resume.Gender;
+                existingResume.LastName = resume.LastName;
+                existingResume.Nationality = resume.Nationality;
+                existingResume.PhoneNumber = resume.PhoneNumber;
+                existingResume.ProfilePicUrl = resume.ProfilePicUrl;
+                existingResume.email = resume.email;
+                existingResume.grade = resume.grade;
+
+                // Remove skills that are no longer associated
+                foreach (var existingSkill in existingResume.Skills.ToList())
+                {
+                    if (!resume.Skills.Any(updatedSkill => updatedSkill.ID == existingSkill.ID))
+                    {
+                        // Skill is no longer associated, so remove it
+                        existingResume.Skills.Remove(existingSkill);
+                    }
+                }
+
+                // Add new skills or update existing ones
+                foreach (var updatedSkill in resume.Skills)
+                {
+                    var existingSkill = existingResume.Skills.FirstOrDefault(s => s.ID == updatedSkill.ID);
+
+                    if (existingSkill == null)
+                    {
+                        // Skill is not associated with the resume, so add it
+                        existingResume.Skills.Add(updatedSkill);
+                    }
+                }
+
+                // Save changes
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (log, return an error response, etc.)
+                Console.WriteLine($"An error occurred while updating the resume: {ex.Message}");
+                throw; // Rethrow the exception to propagate it further if needed
+            }
         }
+
+
         public async Task UpdateSkill(Skill skill)
         {
             _db.Skills.Update(skill);
@@ -82,6 +148,18 @@ namespace proj.Services
         {
             _db.Skills.Remove(skill);
             await _db.SaveChangesAsync();
+        }
+
+        public List<Resume> GetAllResumesForUser(string id)
+        {
+            return _db.Resumes.Where(i=> i.user.Id.Equals(id)).ToList();
+        }
+
+        public Skill GetSkillWithResume(int? id)
+        {
+            return _db.Skills
+               .Include(r => r.Resumes)  // Use the Include method from Microsoft.EntityFrameworkCore
+               .FirstOrDefault(m => m.ID == id);
         }
     }
 }

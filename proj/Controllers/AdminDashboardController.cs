@@ -6,6 +6,8 @@ using proj.Models;
 using proj.Controllers;
 using proj.Areas;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.Storage;
+using proj.Services;
 
 namespace proj.Controllers
 {
@@ -19,15 +21,29 @@ namespace proj.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         //private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IDatabaseRepository _db;
         public string ReturnUrl { get; set; }
 
-        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminDashboardController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,IDatabaseRepository databaseRepository)
         {
             _userManager = userManager;
             //  _signInManager = signInManager;
+            _db = databaseRepository;
             _roleManager = roleManager;
         }
-
+        [HttpGet]
+        public IActionResult Resumes()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Resume> r = _db.GetAllResumes();
+            return View(r);
+        }
+        [HttpGet]
+        public IActionResult Resume(int id)
+        {
+            Resume r = _db.GetResumeWithSkillsById(id);
+            return View(r);
+        }
         public IActionResult Index()
         {
             return View();

@@ -20,6 +20,16 @@
  <span asp-validation-for="@Model.Input.LastName" class="text-danger"></span>
  </div><br />
  <div class="form-group">
+ <label asp-for="@Model.Input.email"></label>
+ <input asp-for="@Model.Input.email" class="form-control" />
+ <span asp-validation-for="@Model.Input.email" class="text-danger"></span>
+ </div><br />
+ <div class="form-group">
+        <label asp-for="@Model.Input.EmailConfirmation"></label>
+        <input asp-for="@Model.Input.EmailConfirmation" class="form-control" />
+        <span asp-validation-for="@Model.Input.EmailConfirmation" class="text-danger"></span>
+ </div><br />
+ <div class="form-group">
  <label asp-for="@Model.Input.ProfileImage" class="control-label"></label><br />
  <input asp-for="@Model.Input.ProfileImage" class="btn btn-secondary custom-file-input" type="file" />
  <span asp-validation-for="@Model.Input.ProfileImage" class="text-danger"></span>

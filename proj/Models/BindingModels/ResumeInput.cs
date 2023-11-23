@@ -12,6 +12,14 @@ namespace proj.Models.BindingModels
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email", Prompt = "example@gmail.com")]
+        public string email { get; set; }
+        [Required]
+        [Compare("email")]
+        [Display(Name = "Email Confirmation")]
+        public string EmailConfirmation { get; set; }
         [BindProperty, DataType(DataType.Date)]
         public DateTime? BirthDate { get; set; }
         [Required]

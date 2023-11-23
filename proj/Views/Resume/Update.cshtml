@@ -1,5 +1,99 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Create";
+}
+@using proj.Controllers;
+@using proj.Models;
+@using static proj.Models.SD
+@model ResumeUpdateView;
+<h1>Fill Your information</h1>
+<hr />
+<form method="post" enctype="multipart/form-data" asp-action="Update" asp-controller="Resume">
+    <input asp-for="@Model.Input.Id" type="hidden"/>
+    <input asp-for="@Model.Input.Skills" type="hidden" />
+    <input asp-for="@Model.Input.ProfilePicUrl" type="hidden" />
+    <div class="form-group">
+        <label asp-for="@Model.Input.FirstName"></label>
+        <input asp-for="@Model.Input.FirstName" class="form-control" />
+        <span asp-validation-for="@Model.Input.FirstName" class="text-danger"></span>
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="@Model.Input.LastName"></label>
+        <input asp-for="@Model.Input.LastName" class="form-control" />
+        <span asp-validation-for="@Model.Input.LastName" class="text-danger"></span>
+    </div>
+    <br />
+
+    @if (Model.Input.ProfilePicUrl != null)
+    {
+        <img src="@Model.Input.ProfilePicUrl" width="150" height="100" />
+        <br />
+    }
+
+    <div class="form-group">
+        <label asp-for="@Model.Pic" class="control-label"></label><br />
+        <input asp-for="@Model.Pic" class="btn btn-secondary custom-file-input" type="file" />
+        <span asp-validation-for="@Model.Pic" class="text-danger"></span>
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="@Model.Input.BirthDate"></label>
+        <input asp-for="@Model.Input.BirthDate" class="form-control" />
+        <span asp-validation-for="@Model.Input.BirthDate" class="text-danger"></span>
+    </div>
+    <br />
+    <div class="form-group">
+        <label asp-for="@Model.Input.email"></label>
+        <input asp-for="@Model.Input.email" class="form-control" />
+        <span asp-validation-for="@Model.Input.email" class="text-danger"></span>
+    </div><br />
+
+    <div class="form-group">
+        <label asp-for="@Model.Input.Nationality"></label> <br />
+        <select asp-for="@Model.Input.Nationality" class="form-control" id="nationality">
+            @foreach (Nationalities nationality in Enum.GetValues(typeof(Nationalities)))
+            {
+                <option value="@nationality" selected="@(nationality.ToString() == Model.Input.Nationality)">@nationality</option>
+            }
+        </select>
+        <span asp-validation-for="@Model.Input.Nationality" class="text-danger"></span>
+    </div>
+    <br />
+
+    <b>Select Your Gender</b> <br />
+    @foreach (var gender in Enum.GetValues(typeof(Gender)))
+    {
+        <input type="radio" asp-for="@Model.Input.Gender" value="@gender" />
+        <label>@gender</label> <br />
+    }
+    <span asp-validation-for="@Model.Input.Gender" class="text-danger"></span><br />
+
+    <div class="form-group">
+        <b>Select Your Skills</b> <br />
+        @for (var i = 0; i < Model.skills.Count; i++)
+        {
+            <input type="checkbox" asp-for="@Model.SkillsCheckboxes[i]" />
+            <label asp-for="@Model.SkillsCheckboxes[i]">@Model.skills[i].Name</label> <br />
+        }
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="@Model.Input.PhoneNumber"></label>
+        <input asp-for="@Model.Input.PhoneNumber" class="form-control" />
+        <span asp-validation-for="@Model.Input.PhoneNumber" placeholder="+961 12 345 678"></span>
+    </div>
+    <br />
+
+    <div>
+        <button type="submit" class="btn btn-secondary">Submit</button>
+    </div>
+
+    <div asp-validation-summary="All"></div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

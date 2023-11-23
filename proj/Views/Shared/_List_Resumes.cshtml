@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model List<Resume>
+@if (SignInManager.IsSignedIn(User))
+{
+
+    <h3>View Variety of Resumes</h3>
+    <p>
+        <a class="btn btn-secondary" asp-action="Create" asp-controller="Resume">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Full Name
+                </th>
+                <th>
+                    Grade
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Resume item in Model)
+            {
+                <tr>
+                    <td>
+                        <a class="link-dark" asp-action="Index" asp-controller="Resume" asp-route-id="@item.Id">
+                            @item.FirstName &nbsp; @item.LastName
+                        </a>
+
+                    </td>
+                    <td style="color:palevioletred">
+                        @item.grade
+                    </td>
+                    <td>
+                        if (await UserManager.IsInRoleAsync(user, "Visitor")){<a class="link-secondary" asp-action="Update" asp-route-id="@item.Id" asp-controller="Resume">Edit</a>}
+
+                        <a class="link-danger" asp-action="Delete" asp-route-id="@item.Id" asp-controller="Resume">Delete</a>
+                        <a class="link-danger" asp-action="Index" asp-route-id="@item.Id" asp-controller="Resume">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
