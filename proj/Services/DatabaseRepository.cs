@@ -150,7 +150,7 @@ namespace proj.Services
             await _db.SaveChangesAsync();
         }
 
-        public List<Resume> GetAllResumesForUser(string id)
+        public List<Resume> GetResumeForUser(string id)
         {
             return _db.Resumes.Where(i=> i.user.Id.Equals(id)).ToList();
         }
@@ -160,6 +160,19 @@ namespace proj.Services
             return _db.Skills
                .Include(r => r.Resumes)  // Use the Include method from Microsoft.EntityFrameworkCore
                .FirstOrDefault(m => m.ID == id);
+        }
+
+        public async Task<bool> UserHasResume(string userId)
+        {
+            // Check if a resume exists for the specified userId
+            return await _db.Resumes.AnyAsync(r => r.user.Id == userId);
+        }
+
+        public List<Resume> GetAllResumesWithUser()
+        {
+            return _db.Resumes
+        .Include(r => r.user)
+        .ToList();
         }
     }
 }

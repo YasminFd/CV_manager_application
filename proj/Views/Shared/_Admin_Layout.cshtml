@@ -53,6 +53,21 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check for the existence of TempData messages and display them
+        document.addEventListener("DOMContentLoaded", function () {
+            var successMessage = "@TempData["Message"]";
+            var errorMessage = "@TempData["Error"]";
+
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+    </script>
     <!-- Add any additional scripts here -->
 </body>
 </html>

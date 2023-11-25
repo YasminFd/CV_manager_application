@@ -31,8 +31,15 @@ namespace proj.Controllers
         public ResumeCreateView Input { get; set; }
         [HttpGet]
         [Authorize(Roles = "Visitor")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (await _db.UserHasResume(userId))
+            {
+                TempData["Error"] = "User already has a resume";
+                RedirectToAction("List");
+            }
+            
             Input.skills= _db.GetAllSkills();
             return View(Input);
         }
@@ -41,7 +48,7 @@ namespace proj.Controllers
         public IActionResult List()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            List<Resume> r = _db.GetAllResumesForUser(userId);
+            List<Resume> r = _db.GetResumeForUser(userId);
             return View(r);
         }
         [HttpGet]
@@ -95,6 +102,7 @@ namespace proj.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             await _db.DeleteResume(id);
+            TempData["Message"] = "Resume deleted successfully!";
             return RedirectToAction("List");
         }
         [HttpPost]
@@ -102,7 +110,9 @@ namespace proj.Controllers
         [Authorize(Roles = "Visitor")]
         public async Task<IActionResult> CreateAsync(ResumeCreateView v)
         {
-            v.skills = _db.GetAllSkills();
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (await _db.UserHasResume(userId)) RedirectToAction("List");
+                v.skills = _db.GetAllSkills();
 
             if (v.Input.ProfileImage == null || !ImageUploadService.CheckExtensionValidity(v.Input.ProfileImage)) 
              {
@@ -132,7 +142,7 @@ namespace proj.Controllers
                         Console.WriteLine($"Error in {key}: {errorMessage}");
                     }
                 }
-                return View();
+                return View(v);
             }
             Resume r = _mapper.Map<Resume>(v.Input);
             if (v.Input.ProfileImage != null)
@@ -161,6 +171,7 @@ namespace proj.Controllers
             }
             r.user = await _user.GetUserAsync(User);
             await _db.AddResume(r);
+            TempData["Message"] ="Resume created successfully!";
             return RedirectToAction("Index", new { id = r.Id });
 
         }
@@ -239,6 +250,7 @@ namespace proj.Controllers
             }
             r.user = await _user.GetUserAsync(User);
             await _db.UpdateResume(r);
+            TempData["Message"] = "Resume updated successfully!";
             return RedirectToAction("Index", new { id = r.Id });
 
         }

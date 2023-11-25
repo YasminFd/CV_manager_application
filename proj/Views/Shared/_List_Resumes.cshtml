@@ -17,6 +17,18 @@
                 <th>
                     Grade
                 </th>
+                
+                @if (User.Identity.IsAuthenticated)
+                {
+                var user = await UserManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        if (await UserManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            <th>User</th>
+                        }
+                    }
+                }
                 <th>Actions</th>
             </tr>
         </thead>
@@ -24,6 +36,7 @@
             @foreach (Resume item in Model)
             {
                 <tr>
+
                     <td>
                         <a class="link-dark" asp-action="Index" asp-controller="Resume" asp-route-id="@item.Id">
                             @item.FirstName &nbsp; @item.LastName
@@ -32,6 +45,17 @@
                     <td style="color:palevioletred">
                         @item.grade
                     </td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = await UserManager.GetUserAsync(User);
+                        if (user != null)
+                        {
+                            if (await UserManager.IsInRoleAsync(user, "Admin"))
+                            {
+                                <th>@item.user.UserName</th>
+                            }
+                        }
+                    }
                     <td>
                         @if (User.Identity.IsAuthenticated)
                         {
