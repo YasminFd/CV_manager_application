@@ -1,4 +1,5 @@
-﻿using proj.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using proj.Models;
 
 namespace proj.Services
 {
@@ -16,7 +17,9 @@ namespace proj.Services
         public Task UpdateSkill(Skill skill);
         public Task DeleteSkill(Skill skill);
         public Skill GetSkillWithResume(int? id);
-        public List<Resume> GetAllResumesForUser(string id);
+        public List<Resume> GetResumeForUser(string id);
+        public Task<bool> UserHasResume(string userId);
+        public List<Resume> GetAllResumesWithUser();
     }
 
 }

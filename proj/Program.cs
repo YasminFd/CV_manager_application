@@ -6,6 +6,8 @@ using System;
 using NuGet.Protocol.Core.Types;
 using proj.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using proj.Authorization;
 
 internal class Program
 {
@@ -27,6 +29,16 @@ internal class Program
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         builder.Services.AddSingleton(mapper);
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ViewResumePolicy", policy =>
+            {
+                policy.Requirements.Add(new ViewResumeRequirement());
+            });
+        });
+
+        builder.Services.AddScoped<IAuthorizationHandler, ViewResumeAuthorizationHandler>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

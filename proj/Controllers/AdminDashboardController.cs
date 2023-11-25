@@ -31,8 +31,24 @@ namespace proj.Controllers
         [HttpGet]
         public IActionResult Resumes()
         {
-            List<Resume> r = _db.GetAllResumes();
+            List<Resume> r = _db.GetAllResumesWithUser();
             return View(r);
+        }
+        [HttpGet]
+        public IActionResult View(string id)
+        {
+            List<Resume> r = _db.GetResumeForUser(id);
+
+            if (r != null)
+            {
+                return RedirectToAction("Resume", new { id = r[0].Id });
+            }
+            else
+            {
+                TempData["Error"] = "No resume to view.";
+                // Handle the case where the resume with the given id is not found.
+                return RedirectToAction("Users");
+            }
         }
         [HttpGet]
         public IActionResult Resume(int id)
@@ -49,6 +65,7 @@ namespace proj.Controllers
         public async Task<IActionResult> Delete_ResumeAsync(int id)
         {
             await _db.DeleteResume(id);
+            TempData["Message"] = "Resume deleted successfully";
             return RedirectToAction("Resumes");
         }
         [HttpGet]
@@ -110,8 +127,10 @@ namespace proj.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                TempData["Message"] = "Admin added successfully!";
                 return RedirectToAction("Index", "AdminDashboard");
             }
+            TempData["Error"] = "Registration failed";
             return RedirectToAction("Index", "AdminDashboard");
         }
         [HttpPost]
